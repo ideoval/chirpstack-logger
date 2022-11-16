@@ -1,6 +1,9 @@
 const { supabase } = require("./supabase");
 
 supabase
-  .from("devices")
-  .select("*")
-  .then(({ data }) => console.log(data));
+  .from("sensors")
+  .update({ value: Math.random() * 100 })
+  .eq("id", 2)
+  .then(({ data, error }) => {
+    console.log(data, error);
+  });
