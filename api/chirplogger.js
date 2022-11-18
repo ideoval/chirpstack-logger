@@ -1,6 +1,6 @@
 const { supabase } = require("./supabase");
 
-const period = 10*1000
+const period = 5;
 
 supabase
   .from("sensors")
@@ -9,13 +9,14 @@ supabase
     const ids = data.map((d) => d.id);
     setInterval(() => {
       ids.forEach((id) => {
+        const value = Math.random() * 100;
         supabase
           .from("sensors")
-          .update({ value: Math.random() * 100 })
+          .update({ value })
           .eq("id", id)
           .then(({ data, error }) => {
-            console.log(data, error);
+            console.log("id:", id, "data:", value.toFixed(2));
           });
       });
-    }, period);
+    }, period * 1000);
   });
