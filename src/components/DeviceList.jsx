@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { getDevices, getRecords, getSensors } from "../js/queries";
+import {
+  getDevices,
+  getRecords,
+  getSensors,
+  recordsChannel,
+  unsubscribe,
+} from "../js/queries";
 import Plot from "./Plot";
 
 const DeviceList = () => {
@@ -8,41 +14,63 @@ const DeviceList = () => {
   const [nodeSensors, setNodeSensors] = useState([]);
   const [measurements, setMeasurements] = useState([]);
   const [error, setError] = useState({ devices: null, sensors: null });
+  const [newRecord, setNewRecord] = useState();
 
   const handleDevice = (e) => {
     const { id } = e.target;
-    console.log(id)
+    console.log(id);
     setNodeSensors(
       sensors.filter((sensor) => sensor.device_id === parseInt(id))
     );
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { data: devices, error: devErr } = await getDevices();
-      const { data: sensors, error: senErr } = await getSensors();
-      setNodes(devices || []);
-      setSensors(sensors || []);
-      setError({ devices: devErr, sensors: senErr });
+    getDevices().then(({ data, err }) => {
+      setNodes(data || []);
+      setError((e) => ({ ...e, devices: err }));
+    });
+    getSensors().then(({ data, err }) => {
+      setSensors(data || []);
+      setError((e) => ({ ...e, sensors: err }));
+    });
+
+    const recordsSubscription = recordsChannel(setNewRecord);
+    return () => {
+      unsubscribe(recordsSubscription);
     };
-    fetchData();
   }, []);
 
   useEffect(() => {
     if (nodeSensors.length > 0) {
       const fetchMeasurements = async () => {
-        const result=[]
+        const result = [];
         for (const sensor of nodeSensors) {
-          const {data: records} = await getRecords(sensor.id)
-          result.push({...sensor, records})
+          const { data: records } = await getRecords(sensor.id);
+          result.push({ ...sensor, records });
         }
-        return result
-      }
-     
-      fetchMeasurements().then(res => setMeasurements(res))
+        return result;
+      };
+
+      fetchMeasurements().then((res) => setMeasurements(res));
     }
-    
   }, [nodeSensors]);
+
+  useEffect(() => {
+    if (newRecord) {
+      const index = measurements.findIndex(
+        (m) => m.id === newRecord.new.sensor_id
+      );
+      console.log(newRecord.new.sensor_id);
+      console.log(index);
+      if (index > 0) {
+        setMeasurements((s) => {
+          const temp = [...s];
+          temp[index].records.push(newRecord.new);
+          return temp;
+        });
+      }
+    }
+  }, [newRecord]);
 
   return (
     <>
@@ -60,7 +88,7 @@ const DeviceList = () => {
       {error.sensors && (
         <p className="has-text-danger">{error.sensors.message}</p>
       )}
-      <Plot measurements={measurements}/>
+      <Plot measurements={measurements} />
     </>
   );
 };

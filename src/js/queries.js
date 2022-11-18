@@ -14,3 +14,20 @@ export const getRecords = async (sensor) => {
     .select("*")
     .eq("sensor_id", sensor);
 };
+
+export const recordsChannel = (callback) => {
+  return supabase
+    .channel("custom-insert-channel")
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "sensor_records" },
+      (payload) => {
+        callback(payload);
+      }
+    )
+    .subscribe();
+};
+
+export const unsubscribe = (subscription) => {
+  supabase.removeChannel(subscription);
+};

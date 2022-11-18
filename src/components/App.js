@@ -1,9 +1,19 @@
+import { useState } from "react";
 import DeviceList from "./DeviceList";
+import Login from "./Login";
 
 const App = () => {
-  return (<>
-    <DeviceList/>
-  </>)
+  const [authenticated, setAuthenticated] = useState(false);
+  
+  return (
+    <>
+      {authenticated ? (
+        <DeviceList />
+      ) : (
+        <Login setAuthenticated={setAuthenticated} />
+      )}
+    </>
+  );
 };
 
 export default App;
