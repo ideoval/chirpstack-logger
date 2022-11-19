@@ -3,7 +3,7 @@ import DeviceList from "./DeviceList";
 import Login from "./Login";
 
 const App = () => {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(true);
   
   return (
     <>

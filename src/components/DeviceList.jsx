@@ -6,6 +6,7 @@ import {
   recordsChannel,
   unsubscribe,
 } from "../js/queries";
+import Map from "./Map";
 import Plot from "./Plot";
 
 const DeviceList = () => {
@@ -15,10 +16,11 @@ const DeviceList = () => {
   const [measurements, setMeasurements] = useState([]);
   const [error, setError] = useState({ devices: null, sensors: null });
   const [newRecord, setNewRecord] = useState();
+  const [device, setDevice] = useState();
 
   const handleDevice = (e) => {
     const { id } = e.target;
-    console.log(id);
+    setDevice(nodes.find((node) => node.id === parseInt(id)));
     setNodeSensors(
       sensors.filter((sensor) => sensor.device_id === parseInt(id))
     );
@@ -60,9 +62,8 @@ const DeviceList = () => {
       const index = measurements.findIndex(
         (m) => m.id === newRecord.new.sensor_id
       );
-      console.log(newRecord.new.sensor_id);
-      console.log(index);
-      if (index > 0) {
+      console.log("sensor_id:", newRecord.new.sensor_id, "index", index);
+      if (index >= 0) {
         setMeasurements((s) => {
           const temp = [...s];
           temp[index].records.push(newRecord.new);
@@ -70,7 +71,7 @@ const DeviceList = () => {
         });
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newRecord]);
 
   return (
@@ -83,12 +84,14 @@ const DeviceList = () => {
         ))}
         {error && <p className="has-text-danger"></p>}
       </ul>
+      <h1 className="title has-text-centered">{device?.name}</h1>
       {error.devices && (
         <p className="has-text-danger">{error.devices.message}</p>
       )}
       {error.sensors && (
         <p className="has-text-danger">{error.sensors.message}</p>
       )}
+      {/* <Map nodes={nodes} sensors={sensors}/> */}
       <Plot measurements={measurements} />
     </>
   );

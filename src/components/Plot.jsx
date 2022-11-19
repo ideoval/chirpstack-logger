@@ -22,7 +22,6 @@ ChartJS.register(
 );
 
 const Plot = ({ measurements }) => {
-  console.log(measurements);
   const data = [];
   const options = [];
 
@@ -49,7 +48,7 @@ const Plot = ({ measurements }) => {
       },
     });
     data.push({
-      labels: measurement.records.map(record => record.id),
+      labels: measurement.records.map(record => new Date(record.created_at).toLocaleString('en-GB')),
       datasets: [
         {
           label: measurement.unit,
