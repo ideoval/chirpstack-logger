@@ -41,7 +41,7 @@ const Plot = ({ measurements }) => {
     labels,
     datasets: [
       {
-        label: "Voltages",
+        label: "Voltage",
         data: measurements.map((m) => m.v),
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -54,7 +54,7 @@ const Plot = ({ measurements }) => {
     datasets: [
       {
         label: "Corriente",
-        data: measurements.map((m) => m.v),
+        data: measurements.map((m) => m.i),
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
