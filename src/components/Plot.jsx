@@ -26,6 +26,7 @@ const Plot = ({ measurements }) => {
   const formatTime = (sample) => {
     return new Date(sample.created_at).toLocaleString();
   };
+
   const options = {
     responsive: true,
     plugins: {
@@ -140,11 +141,11 @@ const Plot = ({ measurements }) => {
             </tr>
           </tbody>
         </table>
-        <Line options={options} data={voltages} />;
-        <Line options={options} data={current} />;
-        <Line options={options} data={power} />;
-        <Line options={options} data={energy} />;
-        <Line options={options} data={rssi} />;
+        <Line options={options} data={voltages} />
+        <Line options={options} data={current} />
+        <Line options={options} data={power} />
+        <Line options={options} data={energy} />
+        <Line options={options} data={rssi} />
       </div>
     </div>
   );
