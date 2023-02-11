@@ -14,6 +14,7 @@ export const getRecords = async (device) => {
     .from("records")
     .select("*")
     .eq("device_id", device)
+    .order("created_at", { ascending: false })
     .limit(100);
 };
 
