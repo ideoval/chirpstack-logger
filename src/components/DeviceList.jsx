@@ -35,7 +35,7 @@ const DeviceList = () => {
   useEffect(() => {
     if (device) {
       getRecords(device.id).then(({ data }) => {
-        setMeasurements(data);
+        setMeasurements(data.reverse());
       });
     }
   }, [device]);

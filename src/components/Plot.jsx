@@ -21,6 +21,11 @@ ChartJS.register(
 );
 
 const Plot = ({ measurements }) => {
+  const latest = measurements[measurements.length - 1];
+
+  const formatTime = (sample) => {
+    return new Date(sample.created_at).toLocaleString();
+  };
   const options = {
     responsive: true,
     plugins: {
@@ -33,9 +38,7 @@ const Plot = ({ measurements }) => {
     },
   };
 
-  const labels = measurements.map((m) =>
-    new Date(m.created_at).toLocaleString()
-  );
+  const labels = measurements.map((m) => formatTime(m));
 
   const voltages = {
     labels,
@@ -98,13 +101,52 @@ const Plot = ({ measurements }) => {
   };
 
   return (
-    <>
-      <Line options={options} data={voltages} />;
-      <Line options={options} data={current} />;
-      <Line options={options} data={power} />;
-      <Line options={options} data={energy} />;
-      <Line options={options} data={rssi} />;
-    </>
+    <div className="columns is-centered">
+      <div
+        className="is-flex"
+        style={{
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        <h1 className="title has-text-centered">Ultimas lecturas</h1>
+        <table>
+          <tbody>
+            <tr>
+              <th>Voltage:</th>
+              <td className="has-text-right">{latest.v}</td>
+            </tr>
+            <tr>
+              <th>Corriente:</th>
+              <td className="has-text-right">{latest.i}</td>
+            </tr>
+            <tr>
+              <th>Potencia:</th>
+              <td className="has-text-right">{latest.p}</td>
+            </tr>
+            <tr>
+              <th>Energia:</th>
+              <td className="has-text-right">{latest.e}</td>
+            </tr>
+            <tr>
+              <th>rssi:</th>
+              <td className="has-text-right">{latest.rssi}</td>
+            </tr>
+            <tr>
+              <th>Hora:</th>
+              <td className="has-text-right">{formatTime(latest)}</td>
+            </tr>
+          </tbody>
+        </table>
+        <Line options={options} data={voltages} />;
+        <Line options={options} data={current} />;
+        <Line options={options} data={power} />;
+        <Line options={options} data={energy} />;
+        <Line options={options} data={rssi} />;
+      </div>
+    </div>
   );
 };
 
