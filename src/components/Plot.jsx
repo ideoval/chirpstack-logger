@@ -9,7 +9,6 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { colors } from "../js/helpers";
 
 ChartJS.register(
   CategoryScale,
@@ -22,50 +21,89 @@ ChartJS.register(
 );
 
 const Plot = ({ measurements }) => {
-  const data = [];
-  const options = [];
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+      },
+    },
+  };
 
-  measurements.forEach((measurement, index) => {
-    options.push({
-      responsive: true,
-      interaction: {
-        mode: "index",
-        intersect: false,
+  const labels = measurements.map((m) =>
+    new Date(m.created_at).toLocaleString()
+  );
+
+  const voltages = {
+    labels,
+    datasets: [
+      {
+        label: "Voltages",
+        data: measurements.map((m) => m.v),
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
-      stacked: false,
-      plugins: {
-        title: {
-          display: true,
-          text: measurement.unit,
-        },
+    ],
+  };
+
+  const current = {
+    labels,
+    datasets: [
+      {
+        label: "Corriente",
+        data: measurements.map((m) => m.v),
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
-      scales: {
-        y: {
-          type: "linear",
-          display: true,
-          position: "left",
-        },
+    ],
+  };
+
+  const power = {
+    labels,
+    datasets: [
+      {
+        label: "Potencia",
+        data: measurements.map((m) => m.p),
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
-    });
-    data.push({
-      labels: measurement.records.map(record => new Date(record.created_at).toLocaleString('en-GB')),
-      datasets: [
-        {
-          label: measurement.unit,
-          data: measurement.records.map(record => record.value),
-          borderColor: colors[index].solid,
-          backgroundColor: colors[index].transparent,
-          yAxisID: "y",
-        },
-      ],
-    });
-  });
+    ],
+  };
+
+  const energy = {
+    labels,
+    datasets: [
+      {
+        label: "Energia",
+        data: measurements.map((m) => m.e),
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+    ],
+  };
+
+  const rssi = {
+    labels,
+    datasets: [
+      {
+        label: "rssi",
+        data: measurements.map((m) => m.rssi),
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+    ],
+  };
 
   return (
     <>
-      {measurements.map((measurement, index) => (
-        <Line key={index} options={options[index]} data={data[index]} />
-      ))}
+      <Line options={options} data={voltages} />;
+      <Line options={options} data={current} />;
+      <Line options={options} data={power} />;
+      <Line options={options} data={energy} />;
+      <Line options={options} data={rssi} />;
     </>
   );
 };

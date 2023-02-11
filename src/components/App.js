@@ -4,7 +4,7 @@ import Login from "./Login";
 
 const App = () => {
   const [authenticated, setAuthenticated] = useState(true);
-  
+
   return (
     <>
       {authenticated ? (

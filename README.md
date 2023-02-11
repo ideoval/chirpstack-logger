@@ -14,3 +14,10 @@ begin
   return new;
 end;
 ```
+
+## Integration
+
+This aproach uses HTTP integration, it is required to set an HTTP server.
+https://www.chirpstack.io/application-server/integrations/http/
+
+loraserver2023JM

@@ -8,11 +8,13 @@ export const getSensors = async () => {
   return await supabase.from("sensors").select("*");
 };
 
-export const getRecords = async (sensor) => {
+export const getRecords = async (device) => {
+  console.log("device:", device);
   return await supabase
-    .from("sensor_records")
+    .from("records")
     .select("*")
-    .eq("sensor_id", sensor);
+    .eq("device_id", device)
+    .limit(100);
 };
 
 export const recordsChannel = (callback) => {
@@ -20,7 +22,7 @@ export const recordsChannel = (callback) => {
     .channel("custom-insert-channel")
     .on(
       "postgres_changes",
-      { event: "INSERT", schema: "public", table: "sensor_records" },
+      { event: "INSERT", schema: "public", table: "records" },
       (payload) => {
         callback(payload);
       }

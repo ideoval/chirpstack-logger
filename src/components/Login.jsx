@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const Login = ({ setAuthenticated }) => {
   const credentials = { user: "admin", pass: "cusco" };
   const [message, setMessage] = useState({ style: "", text: "" });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleLogin = (e) => {
     e.preventDefault();
