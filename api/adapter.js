@@ -1,5 +1,4 @@
 const { supabase } = require("./supabase");
-
 const { spawn } = require("node:child_process");
 
 const application = "application/13a7d9f2-8db1-4533-ad44-06f7810f3ead";
@@ -11,6 +10,7 @@ const sanitize = (lazy) =>
 console.log("... listening to events");
 
 mqtt.stdout.on("data", (data) => {
+  const timeStamp = new Date().toLocaleString();
   const stream = data.toString();
   if (stream.includes(target)) {
     data = stream.replace(target, "");
@@ -31,7 +31,50 @@ mqtt.stdout.on("data", (data) => {
       .eq("device_id", id)
       .then(({ data, error }) => {
         if (error) console.error(error);
-        console.log("... data inserted:", { id, ...measurements });
+        console.log(timeStamp, "... data inserted, id:", id);
       });
   }
 });
+
+const hourly = (now) => {
+  return now.getMinutes() === 0 && now.getSeconds() === 0;
+};
+
+const daily = (now) => {
+  return now.getHours() === 0;
+};
+
+const monthly = (now) => {
+  return now.getDate() === 1 && now.getHours() === 0;
+};
+
+const getLatestRecords = async () => {
+  const { data } = await supabase.from("latest").select("*");
+  return data;
+};
+
+setInterval(() => {
+  const now = new Date();
+
+  if (hourly(now)) {
+    const timeStamp = new Date().toLocaleString();
+    getLatestRecords().then((res) => {
+      res.forEach((latest) => {
+        delete latest.updated_at;
+
+        supabase.from("hourly").insert(latest);
+        console.log(timeStamp, "... hourly inserted");
+
+        if (daily(now)) {
+          supabase.from("daily").insert(latest);
+          console.log(timeStamp, "... daily inserted");
+        }
+
+        if (monthly(now)) {
+          supabase.from("monthly").insert(latest);
+          console.log(timeStamp, "... monthly inserted");
+        }
+      });
+    });
+  }
+}, 1000);
