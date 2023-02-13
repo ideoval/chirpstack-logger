@@ -5,6 +5,7 @@ import {
   recordsChannel,
   unsubscribe,
 } from "../js/queries";
+import Nav from "./Nav";
 // import Map from "./Map";
 import Plot from "./Plot";
 
@@ -16,7 +17,7 @@ const DeviceList = () => {
   const [device, setDevice] = useState();
 
   const handleDevice = (e) => {
-    const { id } = e.target;
+    const id = e.target.value;
     setDevice(nodes.find((node) => node.id === parseInt(id)));
   };
 
@@ -54,15 +55,9 @@ const DeviceList = () => {
 
   return (
     <>
-      <ul>
-        {nodes.map((node) => (
-          <li key={node.id} id={node.id} onClick={handleDevice}>
-            {node.name}
-          </li>
-        ))}
-        {error && <p className="has-text-danger"></p>}
-      </ul>
-      <h1 className="title has-text-centered">{device?.name}</h1>
+      <Nav deviceList={nodes} handler={handleDevice} device={device} />
+
+      {error && <p className="has-text-danger"></p>}
       {error.devices && (
         <p className="has-text-danger">{error.devices.message}</p>
       )}

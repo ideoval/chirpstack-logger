@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { colors } from "../js/helpers";
 
 ChartJS.register(
   CategoryScale,
@@ -28,6 +29,10 @@ const Plot = ({ measurements }) => {
   };
 
   const options = {
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
     responsive: true,
     plugins: {
       legend: {
@@ -47,8 +52,8 @@ const Plot = ({ measurements }) => {
       {
         label: "Voltage",
         data: measurements.map((m) => m.v),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: colors[0].solid,
+        backgroundColor: colors[0].transparent,
       },
     ],
   };
@@ -59,8 +64,8 @@ const Plot = ({ measurements }) => {
       {
         label: "Corriente",
         data: measurements.map((m) => m.i),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: colors[1].solid,
+        backgroundColor: colors[1].transparent,
       },
     ],
   };
@@ -71,8 +76,8 @@ const Plot = ({ measurements }) => {
       {
         label: "Potencia",
         data: measurements.map((m) => m.p),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: colors[2].solid,
+        backgroundColor: colors[2].transparent,
       },
     ],
   };
@@ -83,8 +88,8 @@ const Plot = ({ measurements }) => {
       {
         label: "Energia",
         data: measurements.map((m) => m.e),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: colors[3].solid,
+        backgroundColor: colors[3].transparent,
       },
     ],
   };
@@ -95,8 +100,8 @@ const Plot = ({ measurements }) => {
       {
         label: "rssi",
         data: measurements.map((m) => m.rssi),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: colors[4].solid,
+        backgroundColor: colors[4].transparent,
       },
     ],
   };
@@ -110,6 +115,7 @@ const Plot = ({ measurements }) => {
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
+          marginTop: "1rem",
         }}
       >
         <h1 className="title has-text-centered">Ultimas lecturas</h1>

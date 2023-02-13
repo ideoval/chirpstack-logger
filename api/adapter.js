@@ -14,6 +14,7 @@ mqtt.stdout.on("data", (data) => {
   const stream = data.toString();
   if (stream.includes(target)) {
     data = stream.replace(target, "");
+
     try {
       let payload = JSON.parse(data);
       let buff = Buffer.from(payload.data, "base64");
@@ -35,7 +36,8 @@ mqtt.stdout.on("data", (data) => {
           console.log(timeStamp, "... data inserted, id:", id);
         });
     } catch (error) {
-      console.error(error);
+      console.error(timeStamp, error);
+      console.log(timeStamp, JSON.parse(data));
     }
   }
 });
@@ -90,39 +92,3 @@ setInterval(() => {
     });
   }
 }, 1000);
-
-// const getLatestRecords = async () => {
-//   const { data } = await supabase.from("latest").select("*");
-//   return data;
-// };
-
-// if (true) {
-//   const timeStamp = new Date().toLocaleString();
-//   getLatestRecords().then((res) => {
-//     res.forEach((latest) => {
-//       delete latest.updated_at;
-
-//       supabase
-//         .from("hourly")
-//         .insert(latest)
-//         .then((res) => console.log(res));
-//       console.log(timeStamp, "... hourly inserted");
-
-//       if (true) {
-//         supabase
-//           .from("daily")
-//           .insert(latest)
-//           .then((res) => console.log(res));
-//         console.log(timeStamp, "... daily inserted");
-//       }
-
-//       if (true) {
-//         supabase
-//           .from("monthly")
-//           .insert(latest)
-//           .then((res) => console.log(res));
-//         console.log(timeStamp, "... monthly inserted");
-//       }
-//     });
-//   });
-// }
