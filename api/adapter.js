@@ -4,6 +4,7 @@ const { spawn } = require("node:child_process");
 const application = "application/13a7d9f2-8db1-4533-ad44-06f7810f3ead";
 const mqtt = spawn("mosquitto_sub", ["-t", `${application}/#`, "-v"]);
 const target = `${application}/device/1234567898765432/event/up`;
+let lastTx = {};
 const sanitize = (lazy) =>
   lazy.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');
 
@@ -16,6 +17,7 @@ mqtt.stdout.on("data", (data) => {
     data = stream.replace(target, "");
 
     try {
+      console.log("...new data");
       let payload = JSON.parse(data);
       let buff = Buffer.from(payload.data, "base64");
       let measurement = buff.toString("ascii");
@@ -27,14 +29,23 @@ mqtt.stdout.on("data", (data) => {
       };
       const id = measurements.id;
       delete measurements.id;
-      supabase
-        .from("latest")
-        .update(measurements)
-        .eq("device_id", id)
-        .then(({ data, error }) => {
-          if (error) console.error(error);
-          console.log(timeStamp, "... data inserted, id:", id);
-        });
+
+      if (
+        lastTx.fCnt !== payload.fCnt ||
+        (lastTx.fCnt == payload.fCnt && lastTx.devAddr !== payload.devAddr)
+      ) {
+        supabase
+          .from("latest")
+          .update(measurements)
+          .eq("device_id", id)
+          .then(({ data, error }) => {
+            if (error) console.error(error);
+            console.log(timeStamp, "... data inserted, id:", id);
+          });
+      } else {
+        console.log("...duplicated");
+      }
+      lastTx = { ...payload };
     } catch (error) {
       console.error(timeStamp, error);
       console.log(timeStamp, JSON.parse(data));
