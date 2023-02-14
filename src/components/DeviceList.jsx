@@ -10,15 +10,31 @@ import Nav from "./Nav";
 import Plot from "./Plot";
 
 const DeviceList = () => {
+  const queries = [
+    { id: 1, name: "recientes", table: "records", limit: 60 },
+    { id: 2, name: "horarias", table: "hourly", limit: 24 },
+    { id: 3, name: "diarias", table: "daily", limit: 30 },
+    { id: 4, name: "mensuales", table: "monthly", limit: 12 },
+  ];
+
   const [nodes, setNodes] = useState([]);
   const [measurements, setMeasurements] = useState([]);
   const [error, setError] = useState({ devices: null, sensors: null });
   const [newRecord, setNewRecord] = useState();
   const [device, setDevice] = useState();
+  const [options, setOptions] = useState();
 
   const handleDevice = (e) => {
     const id = e.target.value;
     setDevice(nodes.find((node) => node.id === parseInt(id)));
+  };
+
+  const handleQuery = (e) => {
+    const id = e.target.value;
+    setOptions({
+      device: device.id,
+      ...queries.find((node) => node.id === parseInt(id)),
+    });
   };
 
   useEffect(() => {
@@ -34,20 +50,17 @@ const DeviceList = () => {
   }, []);
 
   useEffect(() => {
-    if (device) {
-      getRecords(device.id).then(({ data }) => {
+    if (device && options) {
+      getRecords(options).then(({ data }) => {
         setMeasurements(data.reverse());
       });
     }
-  }, [device]);
+  }, [device, options]);
 
   useEffect(() => {
-    if (newRecord && device) {
+    if (newRecord && device && options.table === "records") {
       if (newRecord.new.device_id === device.id) {
         setMeasurements((s) => [...s, newRecord.new]);
-        console.log(newRecord);
-        console.log(measurements[measurements.length - 2]);
-        console.log(measurements[measurements.length - 1]);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,7 +68,13 @@ const DeviceList = () => {
 
   return (
     <>
-      <Nav deviceList={nodes} handler={handleDevice} device={device} />
+      <Nav
+        deviceList={nodes}
+        queries={queries}
+        deviceHandler={handleDevice}
+        queryHandler={handleQuery}
+        device={device}
+      />
 
       {error && <p className="has-text-danger"></p>}
       {error.devices && (
@@ -65,7 +84,9 @@ const DeviceList = () => {
         <p className="has-text-danger">{error.sensors.message}</p>
       )}
       {/* <Map nodes={nodes} sensors={sensors} /> */}
-      {measurements.length > 0 && <Plot measurements={measurements} />}
+      {measurements.length > 0 && (
+        <Plot measurements={measurements} options={options} />
+      )}
     </>
   );
 };

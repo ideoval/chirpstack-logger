@@ -17,7 +17,15 @@ end;
 
 ## Integration
 
-This aproach uses HTTP integration, it is required to set an HTTP server.
-https://www.chirpstack.io/application-server/integrations/http/
+The mqqt already enabled aproach was used to listen to LoRaWan events.
+More information can be found here: https://www.chirpstack.io/docs/chirpstack/integrations/mqtt.html
+
+The mostquito `mosquito_sub` command was used to listen to events
+
+```bash
+mosquitto_sub -t "application/APPLICATION_ID/device/+/event/up" -v  # display only the uplink payloads for the given APPLICATION_ID
+```
+
+The code including the node.js routine to read the logs is on `api/adapter.js`
 
 loraserver2023JM

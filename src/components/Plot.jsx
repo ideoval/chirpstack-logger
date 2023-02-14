@@ -21,14 +21,29 @@ ChartJS.register(
   Legend
 );
 
-const Plot = ({ measurements }) => {
+const Plot = ({ measurements, options }) => {
   const latest = measurements[measurements.length - 1];
 
   const formatTime = (sample) => {
-    return new Date(sample.created_at).toLocaleString();
+    const date = new Date(sample.created_at).toLocaleString("sv-SE");
+    if (options === undefined) return date;
+    else {
+      switch (options.table) {
+        case "records":
+          return date;
+        case "hourly":
+          return date.slice(0, -3);
+        case "daily":
+          return date.slice(0, 10);
+        case "monthly":
+          return date.slice(0, 7);
+        default:
+          break;
+      }
+    }
   };
 
-  const options = {
+  const plotOptions = {
     interaction: {
       intersect: false,
       mode: "index",
@@ -45,6 +60,9 @@ const Plot = ({ measurements }) => {
   };
 
   const labels = measurements.map((m) => formatTime(m));
+  const eDiff = measurements.map((m, i) =>
+    measurements[i + 1] !== undefined ? measurements[i + 1].e - m.e : 0
+  );
 
   const voltages = {
     labels,
@@ -94,6 +112,18 @@ const Plot = ({ measurements }) => {
     ],
   };
 
+  const consumption = {
+    labels,
+    datasets: [
+      {
+        label: "Consumos",
+        data: eDiff,
+        borderColor: colors[0].solid,
+        backgroundColor: colors[0].transparent,
+      },
+    ],
+  };
+
   const rssi = {
     labels,
     datasets: [
@@ -118,7 +148,7 @@ const Plot = ({ measurements }) => {
           marginTop: "1rem",
         }}
       >
-        <h1 className="title has-text-centered">Ultimas lecturas</h1>
+        <h1 className="title has-text-centered">Lecturas {options.name}</h1>
         <table>
           <tbody>
             <tr>
@@ -147,11 +177,14 @@ const Plot = ({ measurements }) => {
             </tr>
           </tbody>
         </table>
-        <Line options={options} data={voltages} />
-        <Line options={options} data={current} />
-        <Line options={options} data={power} />
-        <Line options={options} data={energy} />
-        <Line options={options} data={rssi} />
+        <div style={{ maxWidth: "800px" }}>
+          <Line options={plotOptions} data={voltages} />
+          <Line options={plotOptions} data={current} />
+          <Line options={plotOptions} data={power} />
+          <Line options={plotOptions} data={consumption} />
+          <Line options={plotOptions} data={energy} />
+          <Line options={plotOptions} data={rssi} />
+        </div>
       </div>
     </div>
   );

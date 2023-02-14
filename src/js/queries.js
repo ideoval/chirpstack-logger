@@ -8,14 +8,25 @@ export const getSensors = async () => {
   return await supabase.from("sensors").select("*");
 };
 
-export const getRecords = async (device) => {
+// export const getRecords = async (device) => {
+//   console.log("device:", device);
+//   return await supabase
+//     .from("records")
+//     .select("*")
+//     .eq("device_id", device)
+//     .order("created_at", { ascending: false })
+//     .limit(100);
+// };
+
+export const getRecords = async (options) => {
+  const { device, table, limit } = options;
   console.log("device:", device);
   return await supabase
-    .from("records")
+    .from(table)
     .select("*")
     .eq("device_id", device)
     .order("created_at", { ascending: false })
-    .limit(100);
+    .limit(limit);
 };
 
 export const recordsChannel = (callback) => {

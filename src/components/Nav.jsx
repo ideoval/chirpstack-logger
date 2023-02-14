@@ -1,14 +1,4 @@
-const Nav = ({
-  deviceList = [{ id: 1, name: "test" }],
-  queryMode = [
-    { id: 1, name: "Recientes", table: "records", limit: 60 },
-    { id: 2, name: "Hora", table: "hourly", limit: 24 },
-    { id: 3, name: "Dia", table: "daily", limit: 30 },
-    { id: 4, name: "Mes", table: "monthly", limit: 12 },
-  ],
-  handler,
-  device,
-}) => {
+const Nav = ({ deviceList, queries, deviceHandler, queryHandler, device }) => {
   return (
     <div
       className="has-background-info is-flex"
@@ -21,7 +11,7 @@ const Nav = ({
       <div>
         <p className="control">
           <span className="select">
-            <select style={{ width: "15em" }} onChange={handler}>
+            <select style={{ width: "15em" }} onChange={deviceHandler}>
               <option disabled selected>
                 Seleccionar medidor
               </option>
@@ -33,12 +23,12 @@ const Nav = ({
         </p>
         <p className="control">
           <span className="select">
-            <select style={{ width: "15em" }}>
+            <select style={{ width: "15em" }} onChange={queryHandler}>
               <option disabled selected>
                 Seleccionar modo
               </option>
-              {queryMode.map((q) => (
-                <option value={q.id}>{q.name}</option>
+              {queries.map((q) => (
+                <option value={q.id}>Lecturas {q.name}</option>
               ))}
             </select>
           </span>
