@@ -7,8 +7,9 @@ import {
   Title,
   Tooltip,
   Legend,
+  BarElement,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import { colors } from "../js/helpers";
 
 ChartJS.register(
@@ -16,6 +17,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -44,6 +46,27 @@ const Plot = ({ measurements, options }) => {
   };
 
   const plotOptions = {
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+      },
+    },
+  };
+
+  const barOptions = {
+    elements: {
+      bar: {
+        borderWidth: 2,
+      },
+    },
     interaction: {
       intersect: false,
       mode: "index",
@@ -118,8 +141,8 @@ const Plot = ({ measurements, options }) => {
       {
         label: "Consumos",
         data: eDiff,
-        borderColor: colors[0].solid,
-        backgroundColor: colors[0].transparent,
+        borderColor: colors[1].solid,
+        backgroundColor: colors[1].transparent,
       },
     ],
   };
@@ -181,7 +204,7 @@ const Plot = ({ measurements, options }) => {
           <Line options={plotOptions} data={voltages} />
           <Line options={plotOptions} data={current} />
           <Line options={plotOptions} data={power} />
-          <Line options={plotOptions} data={consumption} />
+          <Bar options={barOptions} data={consumption} />
           <Line options={plotOptions} data={energy} />
           <Line options={plotOptions} data={rssi} />
         </div>
