@@ -28,4 +28,4 @@ mosquitto_sub -t "application/APPLICATION_ID/device/+/event/up" -v  # display on
 
 The code including the node.js routine to read the logs is on `api/adapter.js`
 
-loraserver2023JM
+1Luca+na
