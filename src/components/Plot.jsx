@@ -9,7 +9,10 @@ import {
   Legend,
   BarElement,
 } from "chart.js";
-import { Line, Bar } from "react-chartjs-2";
+import {
+  Line,
+  // Bar
+} from "react-chartjs-2";
 import { colors } from "../js/helpers";
 
 ChartJS.register(
@@ -61,12 +64,7 @@ const Plot = ({ measurements, options }) => {
     },
   };
 
-  const barOptions = {
-    elements: {
-      bar: {
-        borderWidth: 2,
-      },
-    },
+  const plotOptionsV = {
     interaction: {
       intersect: false,
       mode: "index",
@@ -80,18 +78,45 @@ const Plot = ({ measurements, options }) => {
         display: true,
       },
     },
+    scales: {
+      y: {
+        min: 100,
+        max: 300,
+      },
+    },
   };
 
+  // const barOptions = {
+  //   elements: {
+  //     bar: {
+  //       borderWidth: 2,
+  //     },
+  //   },
+  //   interaction: {
+  //     intersect: false,
+  //     mode: "index",
+  //   },
+  //   responsive: true,
+  //   plugins: {
+  //     legend: {
+  //       position: "top",
+  //     },
+  //     title: {
+  //       display: true,
+  //     },
+  //   },
+  // };
+
   const labels = measurements.map((m) => formatTime(m));
-  const eDiff = measurements.map((m, i) =>
-    measurements[i + 1] !== undefined ? measurements[i + 1].e - m.e : 0
-  );
+  // const eDiff = measurements.map((m, i) =>
+  //   measurements[i + 1] !== undefined ? measurements[i + 1].e - m.e : 0
+  // );
 
   const voltages = {
     labels,
     datasets: [
       {
-        label: "Voltage",
+        label: "Voltage (V)",
         data: measurements.map((m) => m.v),
         borderColor: colors[0].solid,
         backgroundColor: colors[0].transparent,
@@ -103,7 +128,7 @@ const Plot = ({ measurements, options }) => {
     labels,
     datasets: [
       {
-        label: "Corriente",
+        label: "Corriente (A)",
         data: measurements.map((m) => m.i),
         borderColor: colors[1].solid,
         backgroundColor: colors[1].transparent,
@@ -115,7 +140,7 @@ const Plot = ({ measurements, options }) => {
     labels,
     datasets: [
       {
-        label: "Potencia",
+        label: "Potencia (W)",
         data: measurements.map((m) => m.p),
         borderColor: colors[2].solid,
         backgroundColor: colors[2].transparent,
@@ -127,7 +152,7 @@ const Plot = ({ measurements, options }) => {
     labels,
     datasets: [
       {
-        label: "Energia",
+        label: "Energía (W.h)",
         data: measurements.map((m) => m.e),
         borderColor: colors[3].solid,
         backgroundColor: colors[3].transparent,
@@ -135,17 +160,17 @@ const Plot = ({ measurements, options }) => {
     ],
   };
 
-  const consumption = {
-    labels,
-    datasets: [
-      {
-        label: "Consumos",
-        data: eDiff,
-        borderColor: colors[1].solid,
-        backgroundColor: colors[1].transparent,
-      },
-    ],
-  };
+  // const consumption = {
+  //   labels,
+  //   datasets: [
+  //     {
+  //       label: "Consumos (kW.h)",
+  //       data: eDiff,
+  //       borderColor: colors[1].solid,
+  //       backgroundColor: colors[1].transparent,
+  //     },
+  //   ],
+  // };
 
   const rssi = {
     labels,
@@ -175,23 +200,23 @@ const Plot = ({ measurements, options }) => {
         <table>
           <tbody>
             <tr>
-              <th>Voltage:</th>
+              <th>Voltage (V):</th>
               <td className="has-text-right">{latest.v}</td>
             </tr>
             <tr>
-              <th>Corriente:</th>
+              <th>Corriente (A):</th>
               <td className="has-text-right">{latest.i}</td>
             </tr>
             <tr>
-              <th>Potencia:</th>
+              <th>Potencia (W):</th>
               <td className="has-text-right">{latest.p}</td>
             </tr>
             <tr>
-              <th>Energia:</th>
+              <th>Energia (W.h):</th>
               <td className="has-text-right">{latest.e}</td>
             </tr>
             <tr>
-              <th>rssi:</th>
+              <th>rssi (dBm):</th>
               <td className="has-text-right">{latest.rssi}</td>
             </tr>
             <tr>
@@ -201,10 +226,10 @@ const Plot = ({ measurements, options }) => {
           </tbody>
         </table>
         <div style={{ maxWidth: "800px" }}>
-          <Line options={plotOptions} data={voltages} />
+          <Line options={plotOptionsV} data={voltages} />
           <Line options={plotOptions} data={current} />
           <Line options={plotOptions} data={power} />
-          <Bar options={barOptions} data={consumption} />
+          {/* <Bar options={barOptions} data={consumption} /> */}
           <Line options={plotOptions} data={energy} />
           <Line options={plotOptions} data={rssi} />
         </div>
