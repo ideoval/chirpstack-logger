@@ -86,6 +86,28 @@ const Plot = ({ measurements, options }) => {
     },
   };
 
+  const plotOptionsRssi = {
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+      },
+    },
+    scales: {
+      y: {
+        min: -140,
+        max: -40,
+      },
+    },
+  };
+
   // const barOptions = {
   //   elements: {
   //     bar: {
@@ -176,7 +198,7 @@ const Plot = ({ measurements, options }) => {
     labels,
     datasets: [
       {
-        label: "rssi",
+        label: "rssi (dBm)",
         data: measurements.map((m) => m.rssi),
         borderColor: colors[4].solid,
         backgroundColor: colors[4].transparent,
@@ -231,7 +253,7 @@ const Plot = ({ measurements, options }) => {
           <Line options={plotOptions} data={power} />
           {/* <Bar options={barOptions} data={consumption} /> */}
           <Line options={plotOptions} data={energy} />
-          <Line options={plotOptions} data={rssi} />
+          <Line options={plotOptionsRssi} data={rssi} />
         </div>
       </div>
     </div>
